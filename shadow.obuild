@@ -1,0 +1,30 @@
+name: ocaml-shadow
+version: 0.0.1
+synopsis: OCaml interface to shadow password library
+description:
+  OCaml interface to shadow password library
+license: ISC
+author: Mike McClurg <mike.mcclurg@citrix.com>
+obuild-ver: 1
+homepage: http://github.com/mcclurmc/ocaml-shadow
+
+library shadow
+  modules: shadow
+  src-dir: lib
+  oflags: -warn-error -a -g
+  build-deps: unix, threads
+  cdir: lib
+  c-sources: shadow_stubs.c
+  c-flags: -Wall -g
+  c-libs: crypt
+
+test shadow-test
+  src-dir: test
+  main-is: shadow_test.ml
+  build-deps: shadow
+
+# executable shadow
+#   main-is: shadow.ml
+#   src-dir: lib
+#   build-deps: unix, threads
+#  pp: camlp4o
