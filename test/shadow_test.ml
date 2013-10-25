@@ -3,32 +3,43 @@ open Unix
 
 let tmp_shadow_file = "/home/mike/Projects/ocaml/ocaml-shadow/dummy-file"
 
-let _ =
-	print_endline "Getting password for dummy";
+let chpwd_test name =
+  Printf.printf "Getting password for %s\n" name;
 
-	Printf.printf "Lock acquired? %b\n" (lckpwdf ());
-	let sp = getspnam "dummy" in
-	Printf.printf "Lock released? %b\n" (ulckpwdf ());
+  Printf.printf "Lock acquired? %b\n" (lckpwdf ());
+  let sp = getspnam name in
+  Printf.printf "Lock released? %b\n" (ulckpwdf ());
 
-	Printf.printf "dummy's passwd: %s\n" sp.pwd;
-	Printf.printf "dummy's lstchg: %Ld\n" sp.last_chg;
-	Printf.printf "dummy's min: %Ld\n" sp.min;
-	Printf.printf "dummy's max: %Ld\n" sp.max;
+  Printf.printf "%s's passwd: %s\n" name sp.pwd;
+  Printf.printf "%s's lstchg: %Ld\n" name sp.last_chg;
+  Printf.printf "%s's min: %Ld\n" name sp.min;
+  Printf.printf "%s's max: %Ld\n" name sp.max;
+  Printf.printf "%s's flag: %Ld\n" name sp.flag;
 
-	print_endline "setting dummy's password to 'foobar'";
-	let sp = { sp with pwd = "foobar" } in
+  Printf.printf "setting %s's password to 'foobar'\n" name;
+  let sp = { sp with pwd = "foobar" } in
 
-	let f = openfile tmp_shadow_file [O_WRONLY; O_CREAT; O_TRUNC] 0o666 in
-	putspent sp f;
-	close f;
+  let f = open_in tmp_shadow_file in
+  begin
+    try
+      let l = input_line f in
+      print_endline "we wrote:";
+      print_endline l
+    with _ ->
+      Printf.printf "Couldn't read file '%s'\n" tmp_shadow_file
+  end;
+  close_in f;
 
-	let f = open_in tmp_shadow_file in
-	begin
-		try
-			let l = input_line f in
-			print_endline "we wrote:";
-			print_endline l
-		with _ ->
-			Printf.printf "Couldn't read file '%s'\n" tmp_shadow_file
-	end;
-	close_in f
+  sp
+
+let main =
+  let name = "backup" in
+  with_lock (fun () ->
+    let sp = getspnam name in
+    let db = get_spdb () in
+    let db = update_db db { sp with pwd = "foobar" } in
+    write_all ~file:tmp_shadow_file db)
+
+(* Local Variables: *)
+(* indent-tabs-mode: nil *)
+(* End: *)

@@ -1,4 +1,7 @@
-type spwd = {
+val passwd_file : string
+val shadow_file : string
+
+type ent = {
   name : string;
   pwd : string;
   last_chg : int64;
@@ -10,19 +13,36 @@ type spwd = {
   flag : int64;
 }
 
-type spwd_db = spwd list
+type db = ent list
 
-external getspnam : string -> spwd = "stub_getspnam"
-external putspent : spwd -> Unix.file_descr -> unit = "stub_putspent"
+type file_descr
 
-external getspent : unit -> spwd = "stub_getspent"
+external getspnam : string -> ent = "stub_getspnam"
+
+external getspent : unit -> ent option = "stub_getspent"
 external setspent : unit -> unit = "stub_setspent"
 external endpsent : unit -> unit = "stub_endspent"
 
 external lckpwdf : unit -> bool = "stub_lckpwdf"
 external ulckpwdf : unit -> bool = "stub_ulckpwdf"
 
-val passwd_file : string
-val shadow_file : string
+val open_shadow : ?file:string -> unit -> file_descr
+val close_shadow : file_descr -> unit
+
+val putspent : file_descr -> ent -> unit
 
 val shadow_enabled : unit -> bool
+
+val get_spdb : unit -> db
+
+val update_db : db -> ent -> db
+
+val write_all : ?file:string -> db -> unit
+
+val to_string : ent -> string
+
+val with_lock : (unit -> 'a) -> 'a
+
+(* Local Variables: *)
+(* indent-tabs-mode: nil *)
+(* End: *)
