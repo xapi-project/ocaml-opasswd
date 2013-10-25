@@ -14,14 +14,22 @@ library shadow
   oflags: -warn-error -a -g
   build-deps: unix, threads
   cdir: lib
-  c-sources: shadow_stubs.c
+  c-sources: common_stubs.c, shadow_stubs.c
   c-flags: -Wall -g
-  c-libs: crypt
+
+library passwd
+  modules: passwd
+  src-dir: lib
+  oflags: -warn-error -a -g
+  build-deps: unix, threads
+  cdir: lib
+  c-sources: common_stubs.c, passwd_stubs.c
+  c-flags: -Wall -g
 
 test shadow-test
   src-dir: test
   main-is: shadow_test.ml
-  build-deps: shadow
+  build-deps: shadow, passwd
 
 # executable shadow
 #   main-is: shadow.ml

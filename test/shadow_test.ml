@@ -1,3 +1,4 @@
+open Passwd
 open Shadow
 open Unix
 
@@ -36,9 +37,9 @@ let main =
   let name = "backup" in
   with_lock (fun () ->
     let sp = getspnam name in
-    let db = get_spdb () in
+    let db = get_db () in
     let db = update_db db { sp with pwd = "foobar" } in
-    write_all ~file:tmp_shadow_file db)
+    write_db ~file:tmp_shadow_file db)
 
 (* Local Variables: *)
 (* indent-tabs-mode: nil *)
