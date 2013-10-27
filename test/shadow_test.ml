@@ -1,10 +1,11 @@
-open Passwd
-open Shadow
 open Unix
 
 let tmp_shadow_file = "/home/mike/Projects/ocaml/ocaml-shadow/dummy-file"
+let tmp_passwd_file = "/home/mike/Projects/ocaml/ocaml-shadow/dummy-passwd"
 
 let chpwd_test name =
+  let open Shadow in
+
   Printf.printf "Getting password for %s\n" name;
 
   Printf.printf "Lock acquired? %b\n" (lckpwdf ());
@@ -34,12 +35,22 @@ let chpwd_test name =
   sp
 
 let main =
+  (* Test Shadow *)
   let name = "backup" in
-  with_lock (fun () ->
+  Shadow.with_lock Shadow.(fun () ->
     let sp = getspnam name in
     let db = get_db () in
     let db = update_db db { sp with pwd = "foobar" } in
-    write_db ~file:tmp_shadow_file db)
+    (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
+    write_db ~file:tmp_shadow_file db);
+
+  (* Test Passwd *)
+  let open Passwd in
+  let pw = getpwnam name in
+  let db = get_db () in
+  let db = update_db db { pw with passwd = "barfoo" } in
+  (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
+  write_db ~file:tmp_passwd_file db
 
 (* Local Variables: *)
 (* indent-tabs-mode: nil *)

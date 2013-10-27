@@ -11,11 +11,16 @@ config: dist/setup
 dist/setup: shadow.obuild
 	obuild configure --enable-tests
 
-build: lib-shadow shadow-test dist/setup
+build: lib-passwd lib-shadow shadow-test dist/setup
+
+lib-passwd: dist/build/lib-passwd/passwd.cmxa
 
 lib-shadow: dist/build/lib-shadow/shadow.cmxa
 
 shadow-test: dist/build/shadow-test/test-shadow-test
+
+dist/build/lib-passwd/passwd.cmxa: lib/* dist/setup
+	obuild $(BUILDFLAGS) build
 
 dist/build/lib-shadow/shadow.cmxa: lib/* dist/setup
 	obuild $(BUILDFLAGS) build

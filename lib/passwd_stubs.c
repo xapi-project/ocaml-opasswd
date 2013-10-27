@@ -1,21 +1,4 @@
-#include <sys/types.h>
-#include <shadow.h>
-#include <pwd.h>
-
-#include <errno.h>
-#include <malloc.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <unistd.h>
-
-#include <caml/alloc.h>
-#include <caml/fail.h>
-#include <caml/memory.h>
-#include <caml/mlvalues.h>
-#include <caml/threads.h>
-
-#define SHADOW_FILE "/etc/shadow"
+#include "common.h"
 
 value val_passwd(struct passwd* pw) {
   value ret = caml_alloc(7, 0);
@@ -29,6 +12,24 @@ value val_passwd(struct passwd* pw) {
   Store_field(ret, 6, caml_copy_string(pw->pw_shell == NULL ? "" : pw->pw_shell));
 
   return ret;
+}
+
+struct passwd* passwd_val(value val) {
+  struct passwd* pw = malloc(sizeof(struct passwd));
+
+  if (pw == NULL) {
+    return NULL;
+  }
+
+  pw->pw_name   = String_val(Field(val, 0));
+  pw->pw_passwd = String_val(Field(val, 1));
+  pw->pw_uid    = Int_val(Field(val, 2));
+  pw->pw_gid    = Int_val(Field(val, 3));
+  pw->pw_gecos  = String_val(Field(val, 4));
+  pw->pw_dir    = String_val(Field(val, 5));
+  pw->pw_shell  = String_val(Field(val, 6));
+
+  return pw;
 }
 
 CAMLprim value stub_setpwent(value unit) {
@@ -91,6 +92,67 @@ CAMLprim value stub_getpwnam(value val_name) {
 
   ret = val_passwd(result);
   CAMLreturn(ret);
+}
+
+CAMLprim value stub_getpwuid(value val_uid) {
+  CAMLparam1(val_uid);
+  CAMLlocal1(ret);
+
+  struct passwd pwd;
+  struct passwd *result;
+  char *buf;
+  size_t bufsize;
+
+  uid_t uid = (uid_t) Int_val(val_uid);
+
+  bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+  if (bufsize == -1)          /* Value was indeterminate */
+    bufsize = 16384;        /* Should be more than enough */
+
+  buf = malloc(bufsize);
+  if (buf == NULL) {
+    caml_failwith("stub_getpwuid: ENOMEM");
+  }
+
+  int r = getpwuid_r(uid, &pwd, buf, bufsize, &result);
+  if (result == NULL) {
+    if (r == 0) {
+      caml_failwith("stub_getpwuid: Not found");
+    } else {
+      // TODO better error reporting
+      caml_failwith("stub_getpwuid: Not found");
+    }
+  }
+
+  ret = val_passwd(result);
+  CAMLreturn(ret);
+}
+
+CAMLprim value stub_putpwent(value val_fd, value val_ent) {
+  CAMLparam2(val_fd, val_ent);
+
+  struct passwd* pw = passwd_val(val_ent);
+  FILE* fd = FILE_val(val_fd);
+
+  if (fd == NULL) {
+    caml_failwith("Can't open passwd file for writing");
+  }
+
+  if (pw == NULL) {
+    caml_failwith("putpwent: ENOMEM");
+  }
+
+  caml_release_runtime_system();
+  int r = putpwent(pw, fd);
+  caml_acquire_runtime_system();
+
+  free(pw);
+
+  if (r != 0) {
+    caml_failwith("Couldn't write to passwd file");
+  }
+
+  CAMLreturn(Val_unit);
 }
 
 /* Local Variables: */

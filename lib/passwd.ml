@@ -16,10 +16,10 @@ type file_descr = int64
 
 external getpwnam : string -> ent = "stub_getpwnam"
 external getpwuid : int -> ent = "stub_getpwuid"
-external putpwent : ent -> file_descr -> unit = "stub_putpwent"
+external putpwent : file_descr -> ent -> unit = "stub_putpwent"
 
+external getpwent : unit -> ent option = "stub_getpwent"
 external setpwent : unit -> unit = "stub_setpwent"
-external getpwent : unit -> ent option = "stub_getpwuid"
 external endpwent : unit -> unit = "stub_endpwent"
 
 let to_string p =
@@ -49,7 +49,7 @@ let close_passwd fd =
     stub_fclose fd
   (* with _ -> raise Unix.(Unix_error (EBADF, "close_shadow", "")) *)
 
-let putpwent fd ent = ()
+(* let putpwent fd ent = putpwent ent fd *)
 
 let get_db () =
   let rec loop acc =
@@ -60,11 +60,17 @@ let get_db () =
   setpwent () ;
   loop [] |> List.rev
 
-let write_db ?(file="/etc/passwd") db =
-  (* let fd = open_shadow ~file () in *)
-  (* List.iter (putspent fd) db; *)
-  (* close_shadow fd *)
-  ()
+let rec update_db db ent =
+  let rec loop acc = function
+    | [] -> List.rev acc
+    | e :: es when e.name = ent.name -> loop (ent::acc) es
+    | e :: es -> loop (e::acc) es
+  in loop [] db
+
+let write_db ?(file=passwd_file) db =
+  let fd = open_passwd ~file () in
+  List.iter (putpwent fd) db;
+  close_passwd fd
 
 (* Local Variables: *)
 (* indent-tabs-mode: nil *)
