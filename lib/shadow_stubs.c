@@ -1,40 +1,5 @@
 #include "common.h"
 
-/* value val_spwd(struct spwd* sp) { */
-/*   value ret, tmp; */
-
-/*   ret = caml_alloc(9, 0); // type spwd */
-
-/*   tmp = caml_copy_string(sp->sp_namp == NULL ? "" : sp->sp_namp); */
-/*   Store_field(ret, 0, tmp); */
-
-/*   tmp = caml_copy_string(sp->sp_pwdp == NULL ? "" : sp->sp_pwdp); */
-/*   Store_field(ret, 1, tmp); */
-
-/*   tmp = caml_copy_int64(sp->sp_lstchg); */
-/*   Store_field(ret, 2, tmp); */
-
-/*   tmp = caml_copy_int64(sp->sp_min); */
-/*   Store_field(ret, 3, tmp); */
-
-/*   tmp = caml_copy_int64(sp->sp_max); */
-/*   Store_field(ret, 4, tmp); */
-
-/*   tmp = caml_copy_int64(sp->sp_warn); */
-/*   Store_field(ret, 5, tmp); */
-
-/*   tmp = caml_copy_int64(sp->sp_inact); */
-/*   Store_field(ret, 6, tmp); */
-
-/*   tmp = caml_copy_int64(sp->sp_expire); */
-/*   Store_field(ret, 7, tmp); */
-
-/*   tmp = caml_copy_int64(sp->sp_flag); */
-/*   Store_field(ret, 8, tmp); */
-
-/*   return ret; */
-/* } */
-
 value val_spwd(struct spwd* sp) {
   value ret = caml_alloc(9, 0);
 
@@ -137,60 +102,6 @@ CAMLprim value stub_putspent_fd(value f, value sp_val) {
 
   CAMLreturn(Val_unit);
 }
-
-/* CAMLprim value stub_putspent_s(value sp_val, value s) { */
-/*   CAMLparam1(sp_val); */
-
-/*   const char* path = String_val(s); */
-/*   FILE* fd = fopen(path, "r+"); */
-
-/*   if (fd == NULL) { */
-/*     caml_failwith("Can't open file for writing"); */
-/*   } */
-
-/*   putspent_common(sp_val, fd); */
-
-/*   fclose(fd); */
-
-/*   CAMLreturn(Val_unit); */
-/* } */
-
-/* CAMLprim value stub_putspent_f(value sp_val, value f) { */
-/*   CAMLparam1(sp_val); */
-
-/*   int f2 = dup(Int_val(f)); */
-/*   /\* FILE* fd = fdopen(f2, "r+"); *\/ */
-/*   FILE* fd = fdopen(f2, "w+"); */
-
-/*   if (fd == NULL) { */
-/*     caml_failwith("Can't open file for writing"); */
-/*   } */
-
-/*   putspent_common(sp_val, fd); */
-
-/*   fclose(fd); */
-
-/*   CAMLreturn(Val_unit); */
-
-/*   /\* struct spwd* sp = spwd_val(sp_val); *\/ */
-
-/*   /\* if (sp == NULL) { *\/ */
-/*   /\*  fclose(fd); *\/ */
-/*   /\*  caml_failwith("ENOMEM"); *\/ */
-/*   /\* } *\/ */
-
-/*   /\* caml_release_runtime_system(); *\/ */
-/*   /\* int r = putspent(sp, fd); *\/ */
-/*   /\* caml_acquire_runtime_system(); *\/ */
-
-/*   /\* if (r != 0) { *\/ */
-/*   /\*  fclose(fd); *\/ */
-/*   /\*  free(sp); *\/ */
-/*   /\*  caml_failwith("Couldn't write to shadow file"); *\/ */
-/*   /\* } *\/ */
-
-/*   /\* /\\* printf("* STUB r == %d\n", r); *\\/ *\/ */
-/* } */
 
 CAMLprim value stub_setspent(value unit) {
   setspent();
