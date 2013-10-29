@@ -2,8 +2,8 @@ open Unix
 
 open OPasswd
 
-let tmp_shadow_file = "/home/mike/Projects/ocaml/ocaml-shadow/dummy-file"
-let tmp_passwd_file = "/home/mike/Projects/ocaml/ocaml-shadow/dummy-passwd"
+let tmp_shadow_file = Unix.getcwd () ^ "/dummy-shadow"
+let tmp_passwd_file = Unix.getcwd () ^ "/dummy-passwd"
 
 let chpwd_test name =
   let open Shadow in
@@ -36,8 +36,15 @@ let chpwd_test name =
 
   sp
 
+let create_file file =
+  try
+    ignore (access file [ F_OK ])
+  with _ ->
+    openfile file [ O_CREAT ] 0o666 |> close
+
 let main =
   (* Test Shadow *)
+  create_file tmp_shadow_file;
   let name = "backup" in
   Shadow.with_lock Shadow.(fun () ->
     let sp = getspnam name in
@@ -47,6 +54,7 @@ let main =
     write_db ~file:tmp_shadow_file db);
 
   (* Test Passwd *)
+  create_file tmp_passwd_file;
   let open Passwd in
   let pw = getpwnam name in
   let db = get_db () in
