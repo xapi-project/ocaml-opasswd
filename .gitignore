@@ -3,5 +3,6 @@ dist
 dummy-*
 tmp
 setup.bin
+setup.data
 setup.log
 opasswd_test.native
