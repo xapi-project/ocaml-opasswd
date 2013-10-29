@@ -31,3 +31,9 @@ clean: setup.bin
 distclean: setup.bin
 	./setup.bin -distclean
 	@rm -f setup.* myocamlbuild.ml _tags lib/META lib/liboPasswd_stubs.clib lib/oPasswd.mlpack
+
+uninstall:
+	ocamlfind remove oPasswd
+
+install: _build/lib/oPasswd.cmxa
+	./setup.bin -install
