@@ -13,7 +13,7 @@ Library oPasswd
   FindlibName:  oPasswd
   Pack:         true
   Modules:      Passwd, Shadow, Common
-  BuildDepends: unix, threads
+  BuildDepends: unix
   CSources:     shadow_stubs.c, passwd_stubs.c, common_stubs.c, common.h
   CCOpt:        -Wall -O3
 
