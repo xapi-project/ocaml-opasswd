@@ -1,5 +1,7 @@
 open Unix
 
+open OPasswd
+
 let tmp_shadow_file = "/home/mike/Projects/ocaml/ocaml-shadow/dummy-file"
 let tmp_passwd_file = "/home/mike/Projects/ocaml/ocaml-shadow/dummy-passwd"
 

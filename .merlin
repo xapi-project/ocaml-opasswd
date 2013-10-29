@@ -3,4 +3,5 @@ S test
 B dist/build/lib-passwd
 B dist/build/lib-shadow
 B dist/build/test-shadow_test
+B _build/lib
 PKG unix
