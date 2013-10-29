@@ -9,13 +9,13 @@ Plugins:     META (0.3)
 BuildTools:  ocamlbuild
 
 Library oPasswd
-  Path:            lib
-  FindlibName: oPasswd
-  Pack: true
-  Modules: Passwd, Shadow
+  Path:         lib
+  FindlibName:  oPasswd
+  Pack:         true
+  Modules:      Passwd, Shadow
   BuildDepends: unix, threads
-  CSources: shadow_stubs.c, passwd_stubs.c, common_stubs.c, common.h
-  CCOpt: -Wall -O3
+  CSources:     shadow_stubs.c, passwd_stubs.c, common_stubs.c, common.h
+  CCOpt:        -Wall -O3
 
 Executable opasswd_test
   Path:	           test
