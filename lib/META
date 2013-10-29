@@ -1,6 +1,6 @@
 # OASIS_START
-# DO NOT EDIT (digest: 5a75a785f44378a03db85dccb74c9f8d)
-version = "0.8.0"
+# DO NOT EDIT (digest: 88ff7daa6a0351f2904fac3ab2fb90b6)
+version = "0.8.1"
 description = "OCaml interface to Unix password library"
 requires = "unix threads"
 archive(byte) = "oPasswd.cma"
