@@ -1,3 +1,7 @@
+_build
 dist
 dummy-*
 tmp
+setup.bin
+setup.log
+opasswd_test.native
