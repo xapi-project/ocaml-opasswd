@@ -3,7 +3,7 @@
 SOURCE_LIB=$(shell ls lib/*)
 SOURCE_TEST=$(shell ls test/*)
 
-.PHONY: default build clean distclean
+.PHONY: default build clean distclean test install uninstall
 
 default: build
 
@@ -15,7 +15,7 @@ setup.bin: setup.ml
 	rm -f setup.o setup.cmx setup.cmi
 
 setup.data: setup.bin
-	./setup.bin -configure
+	./setup.bin -configure --enable-tests
 
 build: setup.data _build/lib/oPasswd.cmxa opasswd_test.native
 
@@ -25,15 +25,20 @@ _build/lib/oPasswd.cmxa: $(SOURCE_LIB)
 opasswd_test.native: $(SOURCE_TEST)
 	./setup.bin -build
 
-clean: setup.bin
-	./setup.bin -clean
+clean: setup.ml
+	ocaml setup.ml -clean
 
-distclean: setup.bin
-	./setup.bin -distclean
-	@rm -f setup.* myocamlbuild.ml _tags lib/META lib/liboPasswd_stubs.clib lib/oPasswd.mlpack
+distclean: setup.ml
+	ocaml setup.ml -distclean
+	@rm -f dummy-*
+	@rm -f setup.* myocamlbuild.ml _tags lib/META
+	@rm -f lib/liboPasswd_stubs.clib lib/oPasswd.mlpack
 
 uninstall:
 	ocamlfind remove oPasswd
 
 install: _build/lib/oPasswd.cmxa
 	./setup.bin -install
+
+test: opasswd_test.native
+	sudo ./opasswd_test.native
