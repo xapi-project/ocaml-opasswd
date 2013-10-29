@@ -1,6 +1,6 @@
 OASISFormat: 0.3
 Name:        passwd
-Version:     0.8.1
+Version:     0.8.2
 Synopsis:    OCaml interface to Unix password library
 Authors:     Mike McClurg
 License:     ISC
@@ -12,7 +12,7 @@ Library oPasswd
   Path:         lib
   FindlibName:  oPasswd
   Pack:         true
-  Modules:      Passwd, Shadow
+  Modules:      Passwd, Shadow, Common
   BuildDepends: unix, threads
   CSources:     shadow_stubs.c, passwd_stubs.c, common_stubs.c, common.h
   CCOpt:        -Wall -O3

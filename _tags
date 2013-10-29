@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: abc26247fa6f2aba64d250cca8b59f77)
+# DO NOT EDIT (digest: 50f3f59a0763da09b261b03ef5ff2b0a)
 # Ignore VCS directories, you can use the same kind of rule outside 
 # OASIS_START/STOP if you want to exclude directories that contains 
 # useless stuff for the build process
@@ -17,6 +17,7 @@
 "lib/oPasswd.cmxs": use_oPasswd
 "lib/passwd.cmx": for-pack(OPasswd)
 "lib/shadow.cmx": for-pack(OPasswd)
+"lib/common.cmx": for-pack(OPasswd)
 <lib/*.ml{,i}>: oasis_library_opasswd_ccopt
 "lib/shadow_stubs.c": oasis_library_opasswd_ccopt
 "lib/passwd_stubs.c": oasis_library_opasswd_ccopt
