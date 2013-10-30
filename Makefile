@@ -41,8 +41,10 @@ distclean: setup.bin
 uninstall:
 	ocamlfind remove oPasswd
 
-install: _build/lib/oPasswd.cmxa
+install: $(SETUP) _build/lib/oPasswd.cmxa
 	./setup.bin -install
+
+reinstall: uninstall install
 
 test: opasswd_test.native
 	sudo ./opasswd_test.native
