@@ -37,10 +37,7 @@ let chpwd_test name =
   sp
 
 let create_file file =
-  try
-    ignore (access file [ F_OK ])
-  with _ ->
-    openfile file [ O_CREAT ] 0o666 |> close
+  openfile file [ O_RDONLY; O_CREAT ] 0o666 |> close
 
 let main =
   (* Test Shadow *)
@@ -60,7 +57,11 @@ let main =
   let db = get_db () in
   let db = update_db db { pw with passwd = "barfoo" } in
   (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
-  write_db ~file:tmp_passwd_file db
+  write_db ~file:tmp_passwd_file db;
+
+  (* Test unshadow *)
+  let passwd = Common.unshadow () in
+  print_endline passwd
 
 (* Local Variables: *)
 (* indent-tabs-mode: nil *)

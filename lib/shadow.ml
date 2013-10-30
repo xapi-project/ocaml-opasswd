@@ -79,6 +79,10 @@ let to_string p =
     (str p.expire)
     (str p.flag)
 
+let db_to_string db = db
+  |> List.map to_string
+  |> String.concat "\n"
+
 let with_lock f =
   if lckpwdf ()
   then begin

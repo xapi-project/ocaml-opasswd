@@ -16,6 +16,8 @@ val to_string : ent -> string
 
 type db = ent list
 
+val db_to_string : db -> string
+
 type file_descr
 
 external getspnam : string -> ent = "stub_getspnam"

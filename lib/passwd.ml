@@ -36,6 +36,10 @@ let to_string p =
     p.dir
     p.shell
 
+let db_to_string db = db
+  |> List.map to_string
+  |> String.concat "\n"
+
 external stub_fopen : string -> file_descr = "stub_fopen"
 external stub_fclose : file_descr -> unit = "stub_fclose"
 
