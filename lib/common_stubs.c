@@ -28,3 +28,6 @@ CAMLprim value stub_fclose(value f) {
   CAMLreturn(Val_unit);
 }
 
+/* Local Variables: */
+/* indent-tabs-mode: nil */
+/* End: */
