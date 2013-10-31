@@ -3,6 +3,8 @@
 SOURCE_LIB=$(shell ls lib/*)
 SOURCE_TEST=$(shell ls test/*)
 
+DESTDIR?=/
+
 SETUP=setup.ml setup.bin setup.data
 
 .PHONY: default all build clean distclean test install uninstall
@@ -19,7 +21,7 @@ setup.bin: setup.ml
 	rm -f setup.o setup.cmx setup.cmi
 
 setup.data: setup.bin
-	./setup.bin -configure --enable-tests
+	./setup.bin -configure --enable-tests --destdir $(DESTDIR)
 
 build: $(SETUP) _build/lib/oPasswd.cmxa opasswd_test.native
 
