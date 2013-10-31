@@ -23,6 +23,7 @@ Executable opasswd_test
   MainIs:          opasswd_test.ml
   BuildDepends:	   oPasswd
   CompiledObject:  best
+  Install:         false
 
 Test opasswd_test
   Command: sudo _build/test/opasswd_test.native

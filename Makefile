@@ -3,7 +3,7 @@
 SOURCE_LIB=$(shell ls lib/*)
 SOURCE_TEST=$(shell ls test/*)
 
-DESTDIR?=/
+DESTDIR?=$(shell ocamlc -where)
 
 SETUP=setup.ml setup.bin setup.data
 
@@ -44,6 +44,8 @@ uninstall:
 	ocamlfind remove oPasswd
 
 install: $(SETUP) _build/lib/oPasswd.cmxa
+	OCAMLFIND_DESTDIR=$(DESTDIR) \
+	OCAMLFIND_LDCONF=$(DESTDIR)/ld.conf \
 	./setup.bin -install
 
 reinstall: uninstall install
