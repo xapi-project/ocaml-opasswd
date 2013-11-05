@@ -1,17 +1,30 @@
 #include "common.h"
 
 value val_passwd(struct passwd* pw) {
-  value ret = caml_alloc(7, 0);
+  CAMLparam0();
+  CAMLlocal2(ret, tmp);
 
-  Store_field(ret, 0, caml_copy_string(pw->pw_name == NULL ? "" : pw->pw_name));
-  Store_field(ret, 1, caml_copy_string(pw->pw_passwd == NULL ? "" : pw->pw_passwd));
+  ret = caml_alloc(7, 0);
+
+  tmp = caml_copy_string(pw->pw_name == NULL ? "" : pw->pw_name);
+  Store_field(ret, 0, tmp);
+
+  tmp = caml_copy_string(pw->pw_passwd == NULL ? "" : pw->pw_passwd);
+  Store_field(ret, 1, tmp);
+
   Store_field(ret, 2, Val_int(pw->pw_uid));
   Store_field(ret, 3, Val_int(pw->pw_gid));
-  Store_field(ret, 4, caml_copy_string(pw->pw_gecos == NULL ? "" : pw->pw_gecos));
-  Store_field(ret, 5, caml_copy_string(pw->pw_dir == NULL ? "" : pw->pw_dir));
-  Store_field(ret, 6, caml_copy_string(pw->pw_shell == NULL ? "" : pw->pw_shell));
 
-  return ret;
+  tmp = caml_copy_string(pw->pw_gecos == NULL ? "" : pw->pw_gecos);
+  Store_field(ret, 4, tmp);
+
+  tmp = caml_copy_string(pw->pw_dir == NULL ? "" : pw->pw_dir);
+  Store_field(ret, 5, tmp);
+
+  tmp = caml_copy_string(pw->pw_shell == NULL ? "" : pw->pw_shell);
+  Store_field(ret, 6, tmp);
+
+  CAMLreturn(ret);
 }
 
 struct passwd* passwd_val(value val) {
@@ -50,7 +63,7 @@ CAMLprim value stub_getpwent(value unit) {
 
   if (pw == NULL) {
     // None
-    return Val_int(0);
+    CAMLreturn(Val_int(0));
   } else {
     // Some pw
     ret = alloc_small(1, 0);

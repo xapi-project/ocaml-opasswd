@@ -1,19 +1,39 @@
 #include "common.h"
 
 value val_spwd(struct spwd* sp) {
-  value ret = caml_alloc(9, 0);
+  CAMLparam0();
+  CAMLlocal2(ret, tmp);
 
-  Store_field(ret, 0, caml_copy_string(sp->sp_namp == NULL ? "" : sp->sp_namp));
-  Store_field(ret, 1, caml_copy_string(sp->sp_pwdp == NULL ? "" : sp->sp_pwdp));
-  Store_field(ret, 2, caml_copy_int64(sp->sp_lstchg));
-  Store_field(ret, 3, caml_copy_int64(sp->sp_min));
-  Store_field(ret, 4, caml_copy_int64(sp->sp_max));
-  Store_field(ret, 5, caml_copy_int64(sp->sp_warn));
-  Store_field(ret, 6, caml_copy_int64(sp->sp_inact));
-  Store_field(ret, 7, caml_copy_int64(sp->sp_expire));
-  Store_field(ret, 8, caml_copy_int64(sp->sp_flag));
+  ret = caml_alloc(9, 0);
 
-  return ret;
+  tmp = caml_copy_string(sp->sp_namp == NULL ? "" : sp->sp_namp);
+  Store_field(ret, 0, tmp);
+
+  tmp = caml_copy_string(sp->sp_pwdp == NULL ? "" : sp->sp_pwdp);
+  Store_field(ret, 1, tmp);
+
+  tmp = caml_copy_int64(sp->sp_lstchg);
+  Store_field(ret, 2, tmp);
+
+  tmp = caml_copy_int64(sp->sp_min);
+  Store_field(ret, 3, tmp);
+
+  tmp = caml_copy_int64(sp->sp_max);
+  Store_field(ret, 4, tmp);
+
+  tmp = caml_copy_int64(sp->sp_warn);
+  Store_field(ret, 5, tmp);
+
+  tmp = caml_copy_int64(sp->sp_inact);
+  Store_field(ret, 6, tmp);
+
+  tmp = caml_copy_int64(sp->sp_expire);
+  Store_field(ret, 7, tmp);
+
+  tmp = caml_copy_int64(sp->sp_flag);
+  Store_field(ret, 8, tmp);
+
+  CAMLreturn(ret);
 }
 
 struct spwd* spwd_val(value sp_val) {

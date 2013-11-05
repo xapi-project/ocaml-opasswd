@@ -39,29 +39,68 @@ let chpwd_test name =
 let create_file file =
   openfile file [ O_RDONLY; O_CREAT ] 0o666 |> close
 
-let main =
-  (* Test Shadow *)
+let test_shadow () =
   create_file tmp_shadow_file;
   let name = "backup" in
-  Shadow.with_lock Shadow.(fun () ->
-    let sp = getspnam name in
-    let db = get_db () in
-    let db = update_db db { sp with pwd = "foobar" } in
+  try
+    Shadow.with_lock Shadow.(fun () ->
+      let sp = getspnam name in
+      let db = get_db () in
+      let db = update_db db { sp with pwd = "foobar" } in
     (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
-    write_db ~file:tmp_shadow_file db);
+      write_db ~file:tmp_shadow_file db)
+  with _ ->
+    print_endline "Couldn't acquire lock, must be root"
 
-  (* Test Passwd *)
+let test_passwd () =
   create_file tmp_passwd_file;
   let open Passwd in
+  let name = "backup" in
   let pw = getpwnam name in
   let db = get_db () in
   let db = update_db db { pw with passwd = "barfoo" } in
   (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
-  write_db ~file:tmp_passwd_file db;
+  write_db ~file:tmp_passwd_file db
 
-  (* Test unshadow *)
-  let passwd = Common.unshadow () in
-  print_endline passwd
+let test_unshadow () =
+  try
+    let passwd = Common.unshadow () in
+    print_endline passwd
+  with _ ->
+    print_endline "Couldn't acquire lock, must be root"
+
+(* Try to blow up GC *)
+let test_gc () =
+  let name = "backup"
+  and iter = 1000000 in
+
+  (* Lower GC heap sizes, set verbose *)
+  (* Gc.set { (Gc.get ()) with *)
+  (*   Gc.verbose = 0x3FF; *)
+  (*   Gc.minor_heap_size = 1; *)
+  (* }; *)
+
+  Printf.printf "Testing Passwd.getpwnam on %d iterations\n" iter;
+  Pervasives.(flush stdout);
+  for i = 1 to iter do
+    ignore (Passwd.getpwnam name)
+  done;
+
+  Printf.printf "Testing Shadow.getspnam on %d iterations\n" iter;
+  try
+    for i = 1 to iter do
+      ignore Shadow.(with_lock (fun () -> getspnam name))
+    done;
+  with _ ->
+    print_endline "Couldn't acquire lock, must be root";
+
+  ()
+
+let main =
+  test_shadow ();
+  test_shadow ();
+  test_unshadow ();
+  test_gc ()
 
 (* Local Variables: *)
 (* indent-tabs-mode: nil *)
