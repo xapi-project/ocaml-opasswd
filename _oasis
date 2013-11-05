@@ -14,14 +14,16 @@ Library oPasswd
   Pack:         true
   Modules:      Passwd, Shadow, Common
   BuildDepends: unix
+  NativeOpt:    -warn-error +a -bin-annot # -g -runtime-variant d -verbose
   CSources:     shadow_stubs.c, passwd_stubs.c, common_stubs.c, common.h
-  CCOpt:        -Wall -O3
+  CCOpt:        -Wall -O3 # -g
 
 Executable opasswd_test
   Path:	           test
   BuildTools:      ocamlbuild
   MainIs:          opasswd_test.ml
   BuildDepends:	   oPasswd
+  NativeOpt:       -warn-error +a -bin-annot
   CompiledObject:  best
   Install:         false
 

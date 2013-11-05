@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: b6a2a5bdc5f0e9ec079df75f970fc579)
+# DO NOT EDIT (digest: d9e19654b58f52440fc2f21127f6165d)
 # Ignore VCS directories, you can use the same kind of rule outside 
 # OASIS_START/STOP if you want to exclude directories that contains 
 # useless stuff for the build process
@@ -22,12 +22,19 @@
 "lib/shadow_stubs.c": oasis_library_opasswd_ccopt
 "lib/passwd_stubs.c": oasis_library_opasswd_ccopt
 "lib/common_stubs.c": oasis_library_opasswd_ccopt
+<lib/oPasswd.{cma,cmxa}>: oasis_library_opasswd_native
+<lib/*.ml{,i}>: oasis_library_opasswd_native
+"lib/shadow_stubs.c": oasis_library_opasswd_native
+"lib/passwd_stubs.c": oasis_library_opasswd_native
+"lib/common_stubs.c": oasis_library_opasswd_native
 <lib/oPasswd.{cma,cmxa}>: use_liboPasswd_stubs
 <lib/*.ml{,i}>: pkg_unix
 "lib/shadow_stubs.c": pkg_unix
 "lib/passwd_stubs.c": pkg_unix
 "lib/common_stubs.c": pkg_unix
 # Executable opasswd_test
+<test/opasswd_test.{native,byte}>: oasis_executable_opasswd_test_native
+<test/*.ml{,i}>: oasis_executable_opasswd_test_native
 <test/opasswd_test.{native,byte}>: use_oPasswd
 <test/opasswd_test.{native,byte}>: pkg_unix
 <test/*.ml{,i}>: use_oPasswd
