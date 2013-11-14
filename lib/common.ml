@@ -23,17 +23,22 @@ let put_password name cipher =
       |> write_db
     end)
 
+let rec unshadow acc = function
+  | [] -> List.rev acc
+  | pw::rest ->
+     match Shadow.getspnam pw.Passwd.name with
+     | None ->
+        unshadow (pw::acc) rest
+     | Some sp ->
+        unshadow ({ pw with Passwd.passwd = sp.Shadow.passwd }::acc) rest
+
 let unshadow () =
-  if Shadow.shadow_enabled ()
-  then begin
-    let shadow_db = Shadow.(with_lock get_db)
-    and passwd_db = Passwd.get_db () in
-    List.map2
-      (fun pw sp -> { pw with Passwd.passwd = sp.Shadow.pwd })
-      passwd_db shadow_db
+  if not (Shadow.shadow_enabled ())
+  then
+    Passwd.(get_db () |> db_to_string)
+  else
+    Shadow.with_lock (fun () -> Passwd.get_db () |> unshadow [])
     |> Passwd.db_to_string
-  end
-  else Passwd.(get_db () |> db_to_string)
 
 (* Local Variables: *)
 (* indent-tabs-mode: nil *)
