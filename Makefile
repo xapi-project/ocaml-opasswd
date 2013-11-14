@@ -1,5 +1,7 @@
 # oasis driver
 
+CONFIG?=
+
 SOURCE_LIB=$(shell ls lib/*)
 SOURCE_TEST=$(shell ls test/*)
 
@@ -21,7 +23,7 @@ setup.bin: setup.ml
 	rm -f setup.o setup.cmx setup.cmi
 
 setup.data: setup.bin
-	./setup.bin -configure --enable-tests --destdir $(DESTDIR)
+	./setup.bin -configure --enable-tests --destdir $(DESTDIR) $(CONFIG)
 
 build: $(SETUP) _build/lib/oPasswd.cmxa opasswd_test.native
 

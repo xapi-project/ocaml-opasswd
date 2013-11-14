@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 1f1b571fbd2e5e56367fa38bba356c59) *)
+(* DO NOT EDIT (digest: 2ddb852ba3cba5f16b6c2385bae23818) *)
 module OASISGettext = struct
 (* # 21 "src/oasis/OASISGettext.ml" *)
 
@@ -484,7 +484,189 @@ let package_default =
           (["oasis_library_opasswd_ccopt"; "compile"],
             [
                (OASISExpr.EBool true,
-                 S [A "-ccopt"; A "-Wall"; A "-ccopt"; A "-O3"])
+                 S [A "-ccopt"; A "-g"; A "-ccopt"; A "-Wall"])
+            ]);
+          (["oasis_library_opasswd_byte"; "ocaml"; "link"; "byte"],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
+            ]);
+          (["oasis_library_opasswd_native"; "ocaml"; "link"; "native"],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
+            ]);
+          (["oasis_library_opasswd_byte"; "ocaml"; "ocamldep"; "byte"],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
+            ]);
+          (["oasis_library_opasswd_native"; "ocaml"; "ocamldep"; "native"],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
+            ]);
+          (["oasis_library_opasswd_byte"; "ocaml"; "compile"; "byte"],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
+            ]);
+          (["oasis_library_opasswd_native"; "ocaml"; "compile"; "native"],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
+            ]);
+          (["oasis_executable_opasswd_test_native"; "ocaml"; "link"; "native"
+           ],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
+            ]);
+          ([
+              "oasis_executable_opasswd_test_native";
+              "ocaml";
+              "ocamldep";
+              "native"
+           ],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
+            ]);
+          ([
+              "oasis_executable_opasswd_test_native";
+              "ocaml";
+              "compile";
+              "native"
+           ],
+            [
+               (OASISExpr.EBool true,
+                 S
+                   [A "-warn-error"; A "+a"; A "-bin-annot"; A "-short-paths"
+                   ]);
+               (OASISExpr.EFlag "extra_debugging",
+                 S
+                   [
+                      A "-warn-error";
+                      A "+a";
+                      A "-bin-annot";
+                      A "-short-paths";
+                      A "-g";
+                      A "-runtime-variant";
+                      A "d";
+                      A "-verbose"
+                   ])
             ])
        ];
      includes = [("test", ["lib"])];
@@ -493,6 +675,6 @@ let package_default =
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default package_default;;
 
-# 497 "myocamlbuild.ml"
+# 679 "myocamlbuild.ml"
 (* OASIS_STOP *)
 Ocamlbuild_plugin.dispatch dispatch_default;;
