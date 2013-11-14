@@ -1,27 +1,35 @@
 let get_password name =
   if Shadow.shadow_enabled ()
   then Shadow.(with_lock (fun () ->
-    (getspnam name).pwd))
-  else Passwd.((getpwnam name).passwd)
+    match getspnam name with
+    | None -> None
+    | Some sp -> Some sp.passwd))
+  else match Passwd.getpwnam name with
+    | None -> None
+    | Some pw -> Some pw.Passwd.passwd
 
 let put_password name cipher =
   if Shadow.shadow_enabled ()
   then Shadow.(with_lock (fun () ->
-    let sp = getspnam name in
-    if cipher <> sp.pwd
-    then begin
-      get_db ()
-      |> fun db -> update_db db { sp with pwd = cipher }
-      |> write_db
-    end))
+    match getspnam name with
+    | None -> ()
+    | Some sp ->
+       if cipher <> sp.passwd
+       then begin
+           get_db ()
+           |> fun db -> update_db db { sp with passwd = cipher }
+                        |> write_db
+         end))
   else Passwd.(
-    let pw = getpwnam name in
-    if cipher <> pw.passwd
-    then begin
-      get_db ()
-      |> fun db -> update_db db { pw with passwd = cipher }
-      |> write_db
-    end)
+    match getpwnam name with
+    | None -> ()
+    | Some pw ->
+       if cipher <> pw.passwd
+       then begin
+           get_db ()
+           |> fun db -> update_db db { pw with passwd = cipher }
+           |> write_db
+         end)
 
 let rec unshadow acc = function
   | [] -> List.rev acc

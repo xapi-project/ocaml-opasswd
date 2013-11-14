@@ -1,45 +1,39 @@
 val shadow_file : string
 
-type ent = {
-  name : string;
-  pwd : string;
+type t = {
+  name     : string;
+  passwd   : string;
   last_chg : int64;
-  min : int64;
-  max : int64;
-  warn : int64;
-  inact : int64;
-  expire : int64;
-  flag : int64;
+  min      : int64;
+  max      : int64;
+  warn     : int64;
+  inact    : int64;
+  expire   : int64;
+  flag     : int;
 }
 
-val to_string : ent -> string
+val to_string : t -> string
 
-type db = ent list
+type db = t list
 
 val db_to_string : db -> string
 
-type file_descr
+val getspnam : string -> t option
+val getspent : unit -> t option
 
-external getspnam : string -> ent = "stub_getspnam"
+val setspent : unit -> unit
+val endspent : unit -> unit
+val putspent : Passwd.file_descr -> t -> unit
 
-external getspent : unit -> ent option = "stub_getspent"
-external setspent : unit -> unit = "stub_setspent"
-external endspent : unit -> unit = "stub_endspent"
-external putspent : file_descr -> ent -> unit = "stub_putspent_fd"
-
-external lckpwdf : unit -> bool = "stub_lckpwdf"
-external ulckpwdf : unit -> bool = "stub_ulckpwdf"
+val lckpwdf : unit -> bool
+val ulckpwdf : unit -> bool
 
 val with_lock : (unit -> 'a) -> 'a
-
-val open_shadow : ?file:string -> unit -> file_descr
-val close_shadow : file_descr -> unit
-
 
 val shadow_enabled : unit -> bool
 
 val get_db : unit -> db
-val update_db : db -> ent -> db
+val update_db : db -> t -> db
 val write_db : ?file:string -> db -> unit
 
 (* Local Variables: *)
