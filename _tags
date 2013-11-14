@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: fa94b859a27eaca62143f533a9a6b312)
+# DO NOT EDIT (digest: f7068c987d6ff7f2e61743700395dd7a)
 # Ignore VCS directories, you can use the same kind of rule outside 
 # OASIS_START/STOP if you want to exclude directories that contains 
 # useless stuff for the build process
@@ -18,33 +18,13 @@
 "lib/passwd.cmx": for-pack(OPasswd)
 "lib/shadow.cmx": for-pack(OPasswd)
 "lib/common.cmx": for-pack(OPasswd)
-<lib/*.ml{,i}>: oasis_library_opasswd_ccopt
-"lib/shadow_stubs.c": oasis_library_opasswd_ccopt
-"lib/passwd_stubs.c": oasis_library_opasswd_ccopt
-"lib/common_stubs.c": oasis_library_opasswd_ccopt
 <lib/oPasswd.{cma,cmxa}>: oasis_library_opasswd_byte
 <lib/*.ml{,i}>: oasis_library_opasswd_byte
-"lib/shadow_stubs.c": oasis_library_opasswd_byte
-"lib/passwd_stubs.c": oasis_library_opasswd_byte
-"lib/common_stubs.c": oasis_library_opasswd_byte
 <lib/oPasswd.{cma,cmxa}>: oasis_library_opasswd_native
 <lib/*.ml{,i}>: oasis_library_opasswd_native
-"lib/shadow_stubs.c": oasis_library_opasswd_native
-"lib/passwd_stubs.c": oasis_library_opasswd_native
-"lib/common_stubs.c": oasis_library_opasswd_native
-<lib/oPasswd.{cma,cmxa}>: use_liboPasswd_stubs
 <lib/*.ml{,i}>: pkg_unix
 <lib/*.ml{,i}>: pkg_ctypes
 <lib/*.ml{,i}>: pkg_ctypes.foreign
-"lib/shadow_stubs.c": pkg_unix
-"lib/shadow_stubs.c": pkg_ctypes
-"lib/shadow_stubs.c": pkg_ctypes.foreign
-"lib/passwd_stubs.c": pkg_unix
-"lib/passwd_stubs.c": pkg_ctypes
-"lib/passwd_stubs.c": pkg_ctypes.foreign
-"lib/common_stubs.c": pkg_unix
-"lib/common_stubs.c": pkg_ctypes
-"lib/common_stubs.c": pkg_ctypes.foreign
 # Executable opasswd_test
 <test/opasswd_test.{native,byte}>: oasis_executable_opasswd_test_native
 <test/*.ml{,i}>: oasis_executable_opasswd_test_native

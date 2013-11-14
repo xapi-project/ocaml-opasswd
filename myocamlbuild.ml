@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: 2ddb852ba3cba5f16b6c2385bae23818) *)
+(* DO NOT EDIT (digest: 1c4b57f82fbc5f8ea8a65966af99a4e9) *)
 module OASISGettext = struct
 (* # 21 "src/oasis/OASISGettext.ml" *)
 
@@ -478,14 +478,9 @@ open Ocamlbuild_plugin;;
 let package_default =
   {
      MyOCamlbuildBase.lib_ocaml = [("oPasswd", ["lib"])];
-     lib_c = [("oPasswd", "lib", ["lib/common.h"])];
+     lib_c = [];
      flags =
        [
-          (["oasis_library_opasswd_ccopt"; "compile"],
-            [
-               (OASISExpr.EBool true,
-                 S [A "-ccopt"; A "-g"; A "-ccopt"; A "-Wall"])
-            ]);
           (["oasis_library_opasswd_byte"; "ocaml"; "link"; "byte"],
             [
                (OASISExpr.EBool true,
@@ -675,6 +670,6 @@ let package_default =
 
 let dispatch_default = MyOCamlbuildBase.dispatch_default package_default;;
 
-# 679 "myocamlbuild.ml"
+# 674 "myocamlbuild.ml"
 (* OASIS_STOP *)
 Ocamlbuild_plugin.dispatch dispatch_default;;

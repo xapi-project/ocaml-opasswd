@@ -17,8 +17,6 @@ Library oPasswd
   FindlibName:  oPasswd
   Pack:         true
   Modules:      Passwd, Shadow, Common
-  CSources:     shadow_stubs.c, passwd_stubs.c, common_stubs.c, common.h
-  CCopt:        -g -Wall
   BuildDepends: unix, ctypes, ctypes.foreign
   ByteOpt:      -warn-error +a -bin-annot -short-paths
   if flag(extra_debugging)
