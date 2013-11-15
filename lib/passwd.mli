@@ -1,35 +1,38 @@
 val passwd_file : string
 
-type ent = {
-  name : string;
+type t = {
+  name   : string;
   passwd : string;
-  uid : int;
-  gid : int;
-  gecos : string;
-  dir : string;
-  shell : string;
+  uid    : int;
+  gid    : int;
+  gecos  : string;
+  dir    : string;
+  shell  : string;
 }
 
-val to_string : ent -> string
+val to_string : t -> string
 
-type db = ent list
+type db = t list
 
 val db_to_string : db -> string
 
 type file_descr
+val file_descr : file_descr Ctypes.typ
 
-external getpwnam : string -> ent = "stub_getpwnam"
-external getpwuid : int -> ent = "stub_getpwuid"
+val fopen : string -> string -> file_descr
+val fclose : file_descr -> unit
 
-external getpwent : unit -> ent option = "stub_getpwent"
-external setpwent : unit -> unit = "stub_setpwent"
-external endpwent : unit -> unit = "stub_endpwent"
-external putpwent : file_descr -> ent -> unit = "stub_putpwent"
-
-val open_passwd : ?file:string -> unit -> file_descr
-val close_passwd : file_descr -> unit
-
+val getpwnam : string -> t option
+val getpwuid : int -> t option
+val getpwent : unit -> t option
+val setpwent : unit -> unit
+val endpwent : unit -> unit
+val putpwent : file_descr -> t -> unit
 
 val get_db : unit -> db
-val update_db : db -> ent -> db
+val update_db : db -> t -> db
 val write_db : ?file:string -> db -> unit
+
+(* Local Variables: *)
+(* indent-tabs-mode: nil *)
+(* End: *)
