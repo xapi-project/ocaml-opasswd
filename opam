@@ -1,17 +1,20 @@
-opam-version: "1"
+opam-version: "1.2"
 maintainer: "mike.mcclurg@gmail.com"
 authors: [ "Mike McClurg" ]
 license: "ISC"
 homepage: "https://github.com/mcclurmc/ocaml-opasswd"
-ocaml-version: [>="4.01.0"]
+dev-repo: "https://github.com/mcclurmc/ocaml-opasswd"
+bug-reports: "https://github.com/mcclurmc/ocaml-opasswd/issues"
 build: [
-  ["ocaml" "setup.ml" "-configure" "--prefix" prefix]
-  ["ocaml" "setup.ml" "-build"]
-  ["ocaml" "setup.ml" "-install"]
+  ["./configure" "--prefix" prefix]
+  [make]
 ]
-remove: [
-  ["ocamlfind" "remove" "oPasswd"]
+build-test: [
+  ["./configure" "--enable-tests"]
+  [make "test"]
 ]
+install: [make "install"]
+remove: ["ocamlfind" "remove" "oPasswd"]
 depends: [
   "oasis" {build}
   "ocamlfind" {build}
@@ -19,3 +22,4 @@ depends: [
   "ctypes-foreign"
 ]
 tags: [ "org:xapi-project" ]
+available: [ ocaml-version >= "4.01.0" & ocaml-version < "4.03.0" ]
