@@ -20,15 +20,15 @@ type shadow_t
 
 let shadow_t : shadow_t structure typ = structure "passwd"
 
-let sp_name     = shadow_t *:* string
-let sp_passwd   = shadow_t *:* string
-let sp_last_chg = shadow_t *:* long
-let sp_min      = shadow_t *:* long
-let sp_max      = shadow_t *:* long
-let sp_warn     = shadow_t *:* long
-let sp_inact    = shadow_t *:* long
-let sp_expire   = shadow_t *:* long
-let sp_flag     = shadow_t *:* ulong
+let sp_name     = field shadow_t "sp_name" string
+let sp_passwd   = field shadow_t "sp_passwd" string
+let sp_last_chg = field shadow_t "sp_last_chg" long
+let sp_min      = field shadow_t "sp_min" long
+let sp_max      = field shadow_t "sp_max" long
+let sp_warn     = field shadow_t "sp_warn" long
+let sp_inact    = field shadow_t "sp_inact" long
+let sp_expire   = field shadow_t "sp_expire" long
+let sp_flag     = field shadow_t "sp_flag" ulong
 
 let () = seal shadow_t
 

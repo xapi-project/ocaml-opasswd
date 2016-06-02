@@ -27,13 +27,13 @@ type passwd_t
 
 let passwd_t : passwd_t structure typ = structure "passwd"
 
-let pw_name   = passwd_t *:* string
-let pw_passwd = passwd_t *:* string
-let pw_uid    = passwd_t *:* int
-let pw_gid    = passwd_t *:* int
-let pw_gecos  = passwd_t *:* string
-let pw_dir    = passwd_t *:* string
-let pw_shell  = passwd_t *:* string
+let pw_name   = field passwd_t "pw_name" string
+let pw_passwd = field passwd_t "pw_passwd" string
+let pw_uid    = field passwd_t "pw_uid" int
+let pw_gid    = field passwd_t "pw_gid" int
+let pw_gecos  = field passwd_t "pw_gecos" string
+let pw_dir    = field passwd_t "pw_dir" string
+let pw_shell  = field passwd_t "pw_shell" string
 
 let () = seal passwd_t
 
