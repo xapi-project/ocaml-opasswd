@@ -1,11 +1,11 @@
-OASISFormat: 0.3
+OASISFormat: 0.4
 Name:        passwd
 Version:     0.9.3
 Synopsis:    OCaml interface to Unix password library
 Authors:     Mike McClurg
 License:     ISC
 LicenseFile: LICENSE
-Plugins:     META (0.3)
+Plugins:     META (0.4), DevFiles(0.4)
 BuildTools:  ocamlbuild
 
 Flag extra_debugging

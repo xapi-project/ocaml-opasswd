@@ -1,56 +1,41 @@
-# oasis driver
+# OASIS_START
+# DO NOT EDIT (digest: a3c674b4239234cbbe53afe090018954)
 
-CONFIG?=
+SETUP = ocaml setup.ml
 
-SOURCE_LIB=$(shell ls lib/*)
-SOURCE_TEST=$(shell ls test/*)
+build: setup.data
+	$(SETUP) -build $(BUILDFLAGS)
 
-DESTDIR?=$(shell ocamlc -where)
+doc: setup.data build
+	$(SETUP) -doc $(DOCFLAGS)
 
-SETUP=setup.ml setup.bin setup.data
+test: setup.data build
+	$(SETUP) -test $(TESTFLAGS)
 
-.PHONY: default all build clean distclean test install uninstall
+all:
+	$(SETUP) -all $(ALLFLAGS)
 
-default: build
+install: setup.data
+	$(SETUP) -install $(INSTALLFLAGS)
 
-all: build
+uninstall: setup.data
+	$(SETUP) -uninstall $(UNINSTALLFLAGS)
 
-setup.ml: _oasis
-	oasis setup
+reinstall: setup.data
+	$(SETUP) -reinstall $(REINSTALLFLAGS)
 
-setup.bin: setup.ml
-	ocamlopt -o $@ $<
-	rm -f setup.o setup.cmx setup.cmi
+clean:
+	$(SETUP) -clean $(CLEANFLAGS)
 
-setup.data: setup.bin
-	./setup.bin -configure --enable-tests --destdir $(DESTDIR) $(CONFIG)
+distclean:
+	$(SETUP) -distclean $(DISTCLEANFLAGS)
 
-build: $(SETUP) _build/lib/oPasswd.cmxa opasswd_test.native
+setup.data:
+	$(SETUP) -configure $(CONFIGUREFLAGS)
 
-_build/lib/oPasswd.cmxa: $(SETUP) $(SOURCE_LIB)
-	./setup.bin -build
+configure:
+	$(SETUP) -configure $(CONFIGUREFLAGS)
 
-opasswd_test.native: $(SETUP) $(SOURCE_TEST)
-	./setup.bin -build
+.PHONY: build doc test all install uninstall reinstall clean distclean configure
 
-clean: setup.bin
-	./setup.bin -clean
-	@rm -f dummy-*
-
-distclean: setup.bin
-	./setup.bin -distclean
-	@rm -f lib/liboPasswd_stubs.clib lib/oPasswd.mlpack
-	@rm -f setup.* myocamlbuild.ml _tags lib/META
-
-uninstall:
-	ocamlfind remove oPasswd
-
-install: $(SETUP) _build/lib/oPasswd.cmxa
-	OCAMLFIND_DESTDIR=$(DESTDIR) \
-	OCAMLFIND_LDCONF=$(DESTDIR)/ld.conf \
-	./setup.bin -install
-
-reinstall: uninstall install
-
-test: opasswd_test.native
-	sudo ./opasswd_test.native
+# OASIS_STOP

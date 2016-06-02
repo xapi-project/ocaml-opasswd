@@ -13,7 +13,8 @@ remove: [
   ["ocamlfind" "remove" "oPasswd"]
 ]
 depends: [
-  "ocamlfind"
+  "oasis" {build}
+  "ocamlfind" {build}
   "ctypes" {>= "0.2.2"}
   "ctypes-foreign"
 ]
