@@ -1,6 +1,6 @@
 OASISFormat: 0.4
 Name:        passwd
-Version:     0.9.3
+Version:     1.0.1
 Synopsis:    OCaml interface to Unix password library
 Authors:     Mike McClurg
 License:     ISC
