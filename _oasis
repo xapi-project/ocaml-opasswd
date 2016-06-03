@@ -1,11 +1,11 @@
-OASISFormat: 0.3
+OASISFormat: 0.4
 Name:        passwd
-Version:     0.9.3
+Version:     1.0.1
 Synopsis:    OCaml interface to Unix password library
 Authors:     Mike McClurg
 License:     ISC
 LicenseFile: LICENSE
-Plugins:     META (0.3)
+Plugins:     META (0.4), DevFiles(0.4)
 BuildTools:  ocamlbuild
 
 Flag extra_debugging
@@ -16,18 +16,19 @@ Library oPasswd
   Path:         lib
   FindlibName:  oPasswd
   Pack:         true
-  Modules:      Passwd, Shadow, Common
-  BuildDepends: unix, ctypes, ctypes.foreign
+  Modules:      Common,
+                Passwd,
+                Shadow
+  BuildDepends: ctypes.foreign,
+                unix
   ByteOpt:      -warn-error +a -bin-annot -short-paths
-  if flag(extra_debugging)
-    ByteOpt+:   -g -runtime-variant d -verbose
   NativeOpt:    -warn-error +a -bin-annot -short-paths
   if flag(extra_debugging)
+    ByteOpt+:   -g -runtime-variant d -verbose
     NativeOpt+: -g -runtime-variant d -verbose
 
 Executable opasswd_test
   Path:           test
-  BuildTools:     ocamlbuild
   MainIs:         opasswd_test.ml
   BuildDepends:   oPasswd
   NativeOpt:      -warn-error +a -bin-annot -short-paths
