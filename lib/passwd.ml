@@ -117,7 +117,8 @@ let to_string p =
     p.dir
     p.shell
 
-let db_to_string db = db
+let db_to_string db =
+  db
   |> List.map to_string
   |> String.concat "\n"
 
