@@ -1,6 +1,5 @@
 open Ctypes
 open Foreign
-open PosixTypes
 
 type t = {
   name     : string;
@@ -97,7 +96,7 @@ let get_db () =
   setspent () ;
   loop [] |> List.rev
 
-let rec update_db db pw =
+let update_db db pw =
   let rec loop acc = function
     | [] -> List.rev acc
     | e :: es when e.name = pw.name -> loop (pw::acc) es
