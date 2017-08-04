@@ -1,0 +1,9 @@
+(executable
+ ((name opasswd_test)
+  (libraries (oPasswd))
+  ))
+
+(alias
+ ((name   runtest)
+  (deps   (opasswd_test.exe))
+(action (run ${<}))))
