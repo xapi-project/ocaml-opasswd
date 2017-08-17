@@ -20,18 +20,18 @@ let chspwd_test name pass =
     match getspnam name with
     | None -> raise @@ Invalid_argument name
     | Some sp ->
-       Printf.printf "Lock released? %b\n" (ulckpwdf ());
+      Printf.printf "Lock released? %b\n" (ulckpwdf ());
 
-       Printf.printf "%s's passwd: %s\n" name sp.passwd;
-       Printf.printf "%s's lstchg: %Ld\n" name sp.last_chg;
-       Printf.printf "%s's min: %Ld\n" name sp.min;
-       Printf.printf "%s's max: %Ld\n" name sp.max;
-       Printf.printf "%s's flag: %d\n" name sp.flag;
+      Printf.printf "%s's passwd: %s\n" name sp.passwd;
+      Printf.printf "%s's lstchg: %Ld\n" name sp.last_chg;
+      Printf.printf "%s's min: %Ld\n" name sp.min;
+      Printf.printf "%s's max: %Ld\n" name sp.max;
+      Printf.printf "%s's flag: %d\n" name sp.flag;
 
-       Printf.printf "setting %s's password to '%s'\n" name pass;
-       let sp = { sp with passwd = pass } in
+      Printf.printf "setting %s's password to '%s'\n" name pass;
+      let sp = { sp with passwd = pass } in
 
-       Some sp
+      Some sp
 
 let create_file file =
   openfile file [ O_RDONLY; O_CREAT ] 0o666 |> close
@@ -41,13 +41,13 @@ let test_shadow () =
   let name = !test_name in
   try
     Shadow.with_lock Shadow.(fun () ->
-      match getspnam name with
-      | None -> Printf.printf "Couldn't find user %s\n" name;
-      | Some sp ->
-         let db = get_db () in
-         let db = update_db db { sp with passwd = "foobar" } in
-         (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
-         write_db ~file:tmp_shadow_file db)
+        match getspnam name with
+        | None -> Printf.printf "Couldn't find user %s\n" name;
+        | Some sp ->
+          let db = get_db () in
+          let db = update_db db { sp with passwd = "foobar" } in
+          (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
+          write_db ~file:tmp_shadow_file db)
   with _ ->
     print_endline "Couldn't acquire lock, must be root"
 
@@ -56,12 +56,12 @@ let test_passwd () =
   let open Passwd in
   let name = !test_name in
   begin match getpwnam name with
-  | None -> Printf.printf "test_passwd: Couldn't find user %s\n" name
-  | Some pw ->
-     let db = get_db () in
-     let db = update_db db { pw with passwd = "barfoo" } in
-     (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
-     write_db ~file:tmp_passwd_file db;
+    | None -> Printf.printf "test_passwd: Couldn't find user %s\n" name
+    | Some pw ->
+      let db = get_db () in
+      let db = update_db db { pw with passwd = "barfoo" } in
+      (* print_endline @@ String.concat "\n" @@ List.map to_string db; *)
+      write_db ~file:tmp_passwd_file db;
   end;
   print_endline "* finished test_passwd"; flush Pervasives.stdout
 
@@ -106,8 +106,8 @@ let test_gc () =
 let test_chspwd name pass =
   let open Shadow in
   (match (chspwd_test "root" "foobar") with
-  | None -> ()
-  | Some sp ->
+   | None -> ()
+   | Some sp ->
      Printf.printf "test_chspwd passwd? %b\n" (sp.passwd = "foobar"));
   print_endline "* finished test_chspwd"; flush Pervasives.stdout
 
@@ -115,8 +115,8 @@ let test_null_passwd name =
   match Passwd.getpwnam name with
   | None -> ()
   | Some pw ->
-     Printf.printf "getting %s's gecos val\n" name;
-     Printf.printf "  gecos: %s\n" pw.Passwd.gecos
+    Printf.printf "getting %s's gecos val\n" name;
+    Printf.printf "  gecos: %s\n" pw.Passwd.gecos
 
 let main =
   test_name := "postfix";

@@ -1,6 +1,5 @@
 open Ctypes
 open Foreign
-open PosixTypes
 
 type t = {
   name     : string;
@@ -76,7 +75,7 @@ let endspent = foreign ~check_errno:true "endspent" (void @-> returning void)
 
 let putspent' =
   foreign ~check_errno:true
-          "putspent" (ptr shadow_t @-> Passwd.file_descr @-> returning int)
+    "putspent" (ptr shadow_t @-> Passwd.file_descr @-> returning int)
 let putspent fd sp = putspent' (to_shadow_t sp |> addr) fd |> ignore
 
 let lckpwdf' = foreign "lckpwdf" (void @-> returning int)
@@ -97,7 +96,7 @@ let get_db () =
   setspent () ;
   loop [] |> List.rev
 
-let rec update_db db pw =
+let update_db db pw =
   let rec loop acc = function
     | [] -> List.rev acc
     | e :: es when e.name = pw.name -> loop (pw::acc) es
@@ -125,7 +124,8 @@ let to_string p =
     (str p.expire)
     p.flag
 
-let db_to_string db = db
+let db_to_string db =
+  db
   |> List.map to_string
   |> String.concat "\n"
 

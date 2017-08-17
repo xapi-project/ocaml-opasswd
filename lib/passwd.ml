@@ -1,6 +1,5 @@
 open Ctypes
 open Foreign
-open PosixTypes
 
 type file_descr = unit ptr
 let file_descr : file_descr typ = ptr void
@@ -92,7 +91,7 @@ let get_db () =
   setpwent () ;
   loop [] |> List.rev
 
-let rec update_db db ent =
+let update_db db ent =
   let rec loop acc = function
     | [] -> List.rev acc
     | e :: es when e.name = ent.name -> loop (ent::acc) es
@@ -118,7 +117,8 @@ let to_string p =
     p.dir
     p.shell
 
-let db_to_string db = db
+let db_to_string db =
+  db
   |> List.map to_string
   |> String.concat "\n"
 
