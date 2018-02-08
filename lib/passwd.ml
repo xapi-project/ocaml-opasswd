@@ -12,7 +12,7 @@ let fclose fd = fclose' fd |> ignore
 type t = {
   name   : string;
   passwd : string;
-  (* XXX is it safe to return int instead of uid_t/gid_t? *)
+  (* According to bits/typesizes.h uid_t and gid_t are uint32 *)
   uid    : int; (* uid    : uid_t; *)
   gid    : int; (* gid    : gid_t; *)
   gecos  : string;
@@ -28,8 +28,8 @@ let passwd_t : passwd_t structure typ = structure "passwd"
 
 let pw_name   = field passwd_t "pw_name" string
 let pw_passwd = field passwd_t "pw_passwd" string
-let pw_uid    = field passwd_t "pw_uid" int
-let pw_gid    = field passwd_t "pw_gid" int
+let pw_uid    = field passwd_t "pw_uid" uint32_t
+let pw_gid    = field passwd_t "pw_gid" uint32_t
 let pw_gecos  = field passwd_t "pw_gecos" string
 let pw_dir    = field passwd_t "pw_dir" string
 let pw_shell  = field passwd_t "pw_shell" string
@@ -39,8 +39,8 @@ let () = seal passwd_t
 let from_passwd_t pw = {
   name   = getf !@pw pw_name;
   passwd = getf !@pw pw_passwd;
-  uid    = getf !@pw pw_uid;
-  gid    = getf !@pw pw_gid;
+  uid    = getf !@pw pw_uid |> Unsigned.UInt32.to_int;
+  gid    = getf !@pw pw_gid |> Unsigned.UInt32.to_int;
   gecos  = getf !@pw pw_gecos;
   dir    = getf !@pw pw_dir;
   shell  = getf !@pw pw_shell;
@@ -54,8 +54,8 @@ let to_passwd_t pw =
   let pw_t : passwd_t structure = make passwd_t in
   setf pw_t pw_name pw.name;
   setf pw_t pw_passwd pw.passwd;
-  setf pw_t pw_uid pw.uid;
-  setf pw_t pw_gid pw.gid;
+  setf pw_t pw_uid (Unsigned.UInt32.of_int pw.uid);
+  setf pw_t pw_gid (Unsigned.UInt32.of_int pw.gid);
   setf pw_t pw_gecos pw.gecos;
   setf pw_t pw_dir pw.dir;
   setf pw_t pw_shell pw.shell;
