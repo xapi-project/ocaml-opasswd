@@ -119,7 +119,7 @@ let test_null_passwd name =
     Printf.printf "  gecos: %s\n" pw.Passwd.gecos
 
 let main =
-  test_name := "postfix";
+  test_name := "daemon";
   test_chspwd !test_name "foobar";
   test_shadow ();
   test_passwd ();
