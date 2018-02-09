@@ -21,7 +21,7 @@ let shadow_t : shadow_t structure typ = structure "passwd"
 
 let sp_name     = field shadow_t "sp_name" string
 let sp_passwd   = field shadow_t "sp_passwd" string
-let sp_last_chg = field shadow_t "sp_last_chg" long
+let sp_last_chg  = field shadow_t "sp_lastchg" long
 let sp_min      = field shadow_t "sp_min" long
 let sp_max      = field shadow_t "sp_max" long
 let sp_warn     = field shadow_t "sp_warn" long

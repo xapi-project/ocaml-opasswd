@@ -1,12 +1,3 @@
 _build
-setup.data
-setup.log
-opasswd_test.native
-_tags
-dummy-passwd
-dummy-shadow
-lib/META
-lib/oPasswd.mldylib
-lib/oPasswd.mllib
-lib/oPasswd.mlpack
-myocamlbuild.ml
+.merlin
+*.install

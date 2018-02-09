@@ -6,4 +6,7 @@
 (alias
  ((name   runtest)
   (deps   (opasswd_test.exe))
-(action (run ${<}))))
+  (action (progn
+    (run ${<})
+    (bash "sudo ./opasswd_test.exe"))
+   )))

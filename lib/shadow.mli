@@ -25,6 +25,10 @@ val setspent : unit -> unit
 val endspent : unit -> unit
 val putspent : Passwd.file_descr -> t -> unit
 
+(** Note that the simple locking functionality provided here is not
+    suitable for multi-threaded applications: there is no protection
+    against direct access of the shadow password file. Only programs
+    that use [lckpwdf] will notice the lock. *)
 val lckpwdf : unit -> bool
 val ulckpwdf : unit -> bool
 
