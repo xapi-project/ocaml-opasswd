@@ -36,11 +36,7 @@ let pw_shell  = field passwd_t "pw_shell" (ptr char)
 
 let () = seal passwd_t
 
-let ptr_char_to_string p =
-  let s = coerce (ptr char) string p in
-  let b = Buffer.create 128 in
-  Buffer.add_string b s;
-  Buffer.contents b
+let ptr_char_to_string p = coerce (ptr char) string p
 
 let string_to_char_array s =
   let len = String.length s in

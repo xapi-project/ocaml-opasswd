@@ -31,11 +31,7 @@ let sp_flag     = field shadow_t "sp_flag" ulong
 
 let () = seal shadow_t
 
-let ptr_char_to_string p =
-  let s = coerce (ptr char) string p in
-  let b = Buffer.create 128 in
-  Buffer.add_string b s;
-  Buffer.contents b
+let ptr_char_to_string = coerce (ptr char) string
 
 let string_to_char_array s =
   let len = String.length s in
