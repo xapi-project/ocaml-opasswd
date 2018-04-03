@@ -19,8 +19,8 @@ type shadow_t
 
 let shadow_t : shadow_t structure typ = structure "passwd"
 
-let sp_name     = field shadow_t "sp_name" string
-let sp_passwd   = field shadow_t "sp_passwd" string
+let sp_name     = field shadow_t "sp_name" (ptr char)
+let sp_passwd   = field shadow_t "sp_passwd" (ptr char)
 let sp_last_chg  = field shadow_t "sp_lastchg" long
 let sp_min      = field shadow_t "sp_min" long
 let sp_max      = field shadow_t "sp_max" long
@@ -31,9 +31,17 @@ let sp_flag     = field shadow_t "sp_flag" ulong
 
 let () = seal shadow_t
 
+let ptr_char_to_string = coerce (ptr char) string
+
+let string_to_char_array s =
+  let len = String.length s in
+  let buf = CArray.make char ~initial:'\x00' len in
+  String.iteri (fun idx c -> CArray.set buf idx c) s;
+  buf
+
 let from_shadow_t sp = {
-  name     = getf !@sp sp_name;
-  passwd   = getf !@sp sp_passwd;
+  name     = getf !@sp sp_name |> ptr_char_to_string;
+  passwd   = getf !@sp sp_passwd |> ptr_char_to_string;
   last_chg = getf !@sp sp_last_chg |> Signed.Long.to_int64;
   min      = getf !@sp sp_min |> Signed.Long.to_int64;
   max      = getf !@sp sp_max |> Signed.Long.to_int64;
@@ -49,8 +57,8 @@ let from_shadow_t_opt = function
 
 let to_shadow_t sp =
   let sp_t : shadow_t structure = make shadow_t in
-  setf sp_t sp_name sp.name;
-  setf sp_t sp_passwd sp.passwd;
+  setf sp_t sp_name (sp.name |> string_to_char_array |> CArray.start);
+  setf sp_t sp_passwd (sp.passwd |> string_to_char_array |> CArray.start);
   setf sp_t sp_last_chg (Signed.Long.of_int64 sp.last_chg);
   setf sp_t sp_min (Signed.Long.of_int64 sp.min);
   setf sp_t sp_max (Signed.Long.of_int64 sp.max);
@@ -76,7 +84,9 @@ let endspent = foreign ~check_errno:true "endspent" (void @-> returning void)
 let putspent' =
   foreign ~check_errno:true
     "putspent" (ptr shadow_t @-> Passwd.file_descr @-> returning int)
-let putspent fd sp = putspent' (to_shadow_t sp |> addr) fd |> ignore
+let putspent fd sp = 
+  let shadow_ptr = addr (to_shadow_t sp) in
+  putspent' shadow_ptr fd |> ignore
 
 let lckpwdf' = foreign "lckpwdf" (void @-> returning int)
 let lckpwdf () = lckpwdf' () = 0
