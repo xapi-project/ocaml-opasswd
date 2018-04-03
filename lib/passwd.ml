@@ -88,7 +88,9 @@ let endpwent = foreign ~check_errno:true "endpwent" (void @-> returning void)
 
 let putpwent' =
   foreign ~check_errno:true "putpwent" (ptr passwd_t @-> file_descr @-> returning int)
-let putpwent fd pw = putpwent' (to_passwd_t pw |> addr) fd |> ignore
+let putpwent fd pw =
+  let passwd_ptr = addr (to_passwd_t pw) in
+  putpwent' passwd_ptr fd |> ignore
 
 let get_db () =
   let rec loop acc =

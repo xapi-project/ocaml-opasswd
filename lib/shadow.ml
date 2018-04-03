@@ -84,7 +84,9 @@ let endspent = foreign ~check_errno:true "endspent" (void @-> returning void)
 let putspent' =
   foreign ~check_errno:true
     "putspent" (ptr shadow_t @-> Passwd.file_descr @-> returning int)
-let putspent fd sp = putspent' (to_shadow_t sp |> addr) fd |> ignore
+let putspent fd sp = 
+  let shadow_ptr = addr (to_shadow_t sp) in
+  putspent' shadow_ptr fd |> ignore
 
 let lckpwdf' = foreign "lckpwdf" (void @-> returning int)
 let lckpwdf () = lckpwdf' () = 0
