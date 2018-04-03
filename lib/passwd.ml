@@ -26,24 +26,36 @@ type passwd_t
 
 let passwd_t : passwd_t structure typ = structure "passwd"
 
-let pw_name   = field passwd_t "pw_name" string
-let pw_passwd = field passwd_t "pw_passwd" string
+let pw_name   = field passwd_t "pw_name" (ptr char)
+let pw_passwd = field passwd_t "pw_passwd" (ptr char)
 let pw_uid    = field passwd_t "pw_uid" uint32_t
 let pw_gid    = field passwd_t "pw_gid" uint32_t
-let pw_gecos  = field passwd_t "pw_gecos" string
-let pw_dir    = field passwd_t "pw_dir" string
-let pw_shell  = field passwd_t "pw_shell" string
+let pw_gecos  = field passwd_t "pw_gecos" (ptr char)
+let pw_dir    = field passwd_t "pw_dir" (ptr char)
+let pw_shell  = field passwd_t "pw_shell" (ptr char)
 
 let () = seal passwd_t
 
+let ptr_char_to_string p =
+  let s = coerce (ptr char) string p in
+  let b = Buffer.create 128 in
+  Buffer.add_string b s;
+  Buffer.contents b
+
+let string_to_char_array s =
+  let len = String.length s in
+  let buf = CArray.make char ~initial:'\x00' len in
+  String.iteri (fun idx c -> CArray.set buf idx c) s;
+  buf
+
 let from_passwd_t pw = {
-  name   = getf !@pw pw_name;
-  passwd = getf !@pw pw_passwd;
+  name   = getf !@pw pw_name |> ptr_char_to_string;
+  passwd = getf !@pw pw_passwd |> ptr_char_to_string;
   uid    = getf !@pw pw_uid |> Unsigned.UInt32.to_int;
   gid    = getf !@pw pw_gid |> Unsigned.UInt32.to_int;
-  gecos  = getf !@pw pw_gecos;
-  dir    = getf !@pw pw_dir;
-  shell  = getf !@pw pw_shell;
+  gecos  = getf !@pw pw_gecos |> ptr_char_to_string;
+  dir    = getf !@pw pw_dir |> ptr_char_to_string;
+  shell  = getf !@pw pw_shell |> ptr_char_to_string;
 }
 
 let from_passwd_t_opt = function
@@ -52,13 +64,13 @@ let from_passwd_t_opt = function
 
 let to_passwd_t pw =
   let pw_t : passwd_t structure = make passwd_t in
-  setf pw_t pw_name pw.name;
-  setf pw_t pw_passwd pw.passwd;
+  setf pw_t pw_name (pw.name |> string_to_char_array |> CArray.start);
+  setf pw_t pw_passwd (pw.passwd |> string_to_char_array |> CArray.start);
   setf pw_t pw_uid (Unsigned.UInt32.of_int pw.uid);
   setf pw_t pw_gid (Unsigned.UInt32.of_int pw.gid);
-  setf pw_t pw_gecos pw.gecos;
-  setf pw_t pw_dir pw.dir;
-  setf pw_t pw_shell pw.shell;
+  setf pw_t pw_gecos (pw.gecos |> string_to_char_array |> CArray.start);
+  setf pw_t pw_dir (pw.dir |> string_to_char_array |> CArray.start);
+  setf pw_t pw_shell (pw.shell |> string_to_char_array |> CArray.start);
   pw_t
 
 let passwd_file = "/etc/passwd"
