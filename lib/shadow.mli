@@ -16,6 +16,13 @@ val to_string : t -> string
 
 type db = t list
 
+module Mem : sig
+  type mem
+
+  val to_mem : t -> mem
+  val from_mem : mem -> t
+end
+
 val db_to_string : db -> string
 
 val getspnam : string -> t option

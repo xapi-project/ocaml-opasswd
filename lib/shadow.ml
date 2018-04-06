@@ -40,33 +40,56 @@ let string_to_char_array s =
   buf
 
 let from_shadow_t sp = {
-  name     = getf !@sp sp_name |> ptr_char_to_string;
-  passwd   = getf !@sp sp_passwd |> ptr_char_to_string;
-  last_chg = getf !@sp sp_last_chg |> Signed.Long.to_int64;
-  min      = getf !@sp sp_min |> Signed.Long.to_int64;
-  max      = getf !@sp sp_max |> Signed.Long.to_int64;
-  warn     = getf !@sp sp_warn |> Signed.Long.to_int64;
-  inact    = getf !@sp sp_inact |> Signed.Long.to_int64;
-  expire   = getf !@sp sp_expire |> Signed.Long.to_int64;
-  flag     = getf !@sp sp_flag |> Unsigned.ULong.to_int;
+  name     = getf sp sp_name |> ptr_char_to_string;
+  passwd   = getf sp sp_passwd |> ptr_char_to_string;
+  last_chg = getf sp sp_last_chg |> Signed.Long.to_int64;
+  min      = getf sp sp_min |> Signed.Long.to_int64;
+  max      = getf sp sp_max |> Signed.Long.to_int64;
+  warn     = getf sp sp_warn |> Signed.Long.to_int64;
+  inact    = getf sp sp_inact |> Signed.Long.to_int64;
+  expire   = getf sp sp_expire |> Signed.Long.to_int64;
+  flag     = getf sp sp_flag |> Unsigned.ULong.to_int;
 }
 
 let from_shadow_t_opt = function
   | None -> None
-  | Some sp -> Some (from_shadow_t sp)
+  | Some sp -> Some (from_shadow_t !@sp)
 
-let to_shadow_t sp =
-  let sp_t : shadow_t structure = make shadow_t in
-  setf sp_t sp_name (sp.name |> string_to_char_array |> CArray.start);
-  setf sp_t sp_passwd (sp.passwd |> string_to_char_array |> CArray.start);
-  setf sp_t sp_last_chg (Signed.Long.of_int64 sp.last_chg);
-  setf sp_t sp_min (Signed.Long.of_int64 sp.min);
-  setf sp_t sp_max (Signed.Long.of_int64 sp.max);
-  setf sp_t sp_warn (Signed.Long.of_int64 sp.warn);
-  setf sp_t sp_inact (Signed.Long.of_int64 sp.inact);
-  setf sp_t sp_expire (Signed.Long.of_int64 sp.expire);
-  setf sp_t sp_flag (Unsigned.ULong.of_int sp.flag);
-  sp_t
+(* Wrap up all the allocating functions into this module that
+   returns an opaque type. This tries to make sure that the
+   lifetime of all the allocated memory is the same. The one
+   dangerous thing is 'shadow_addr_of_mem' - but it's a bit
+   more obvious that you've got to keep the 'mem' value alive
+   than the individual fields within it too. Note that we
+   actually hide `shadow_addr_of_mem` from outside this module
+   via the mli file. Paranoia! *)
+module Mem : sig
+  type mem
+  val to_mem : t -> mem
+  val from_mem : mem -> t
+  val shadow_addr_of_mem : mem -> (shadow_t, [ `Struct ]) Ctypes.structured Ctypes.ptr
+end = struct
+  type mem = shadow_t structure * char carray * char carray
+
+  let to_mem sp =
+    let name = string_to_char_array sp.name in
+    let passwd = string_to_char_array sp.passwd in
+    let sp_t : shadow_t structure = make shadow_t in
+    setf sp_t sp_name (CArray.start name);
+    setf sp_t sp_passwd (CArray.start passwd);
+    setf sp_t sp_last_chg (Signed.Long.of_int64 sp.last_chg);
+    setf sp_t sp_min (Signed.Long.of_int64 sp.min);
+    setf sp_t sp_max (Signed.Long.of_int64 sp.max);
+    setf sp_t sp_warn (Signed.Long.of_int64 sp.warn);
+    setf sp_t sp_inact (Signed.Long.of_int64 sp.inact);
+    setf sp_t sp_expire (Signed.Long.of_int64 sp.expire);
+    setf sp_t sp_flag (Unsigned.ULong.of_int sp.flag);
+    (sp_t,name,passwd)
+
+  let from_mem (sp_t, _name, _passwd) = from_shadow_t sp_t
+
+  let shadow_addr_of_mem (sp_t, _, _) = addr sp_t
+end
 
 let shadow_file = "/etc/shadow"
 
@@ -84,9 +107,9 @@ let endspent = foreign ~check_errno:true "endspent" (void @-> returning void)
 let putspent' =
   foreign ~check_errno:true
     "putspent" (ptr shadow_t @-> Passwd.file_descr @-> returning int)
-let putspent fd sp = 
-  let shadow_ptr = addr (to_shadow_t sp) in
-  putspent' shadow_ptr fd |> ignore
+let putspent fd sp =
+  let mem = Mem.to_mem sp in
+  putspent' (Mem.shadow_addr_of_mem mem) fd |> ignore
 
 let lckpwdf' = foreign "lckpwdf" (void @-> returning int)
 let lckpwdf () = lckpwdf' () = 0

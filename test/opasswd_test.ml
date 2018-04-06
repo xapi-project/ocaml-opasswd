@@ -77,31 +77,30 @@ let test_unshadow () =
 
 (* Try to blow up GC *)
 let test_gc () =
-  let name = !test_name
-  and iter = 1000000 in
+  Printf.printf "Testing shadow\n%!";
+  let rec mkshadow n =
+    let name = "myname" in
+    let passwd = "mypasswd" in
+    let tmp = Shadow.(Mem.to_mem {name; passwd; last_chg=0L; min=0L; max=0L; warn=0L; inact=0L; expire=0L; flag=0;}) in
+    if n=0
+    then tmp
+    else begin
+      let result = mkshadow (n-1) in
+      if name=passwd then failwith "ugh";
+      result;
+    end
+  in
+  let first = mkshadow 10000 in
+  let second = mkshadow 10000 in
+  let first_t = Shadow.Mem.from_mem first in
+  let second_t = Shadow.Mem.from_mem second in
+  if (first_t = second_t) then
+    Printf.printf "shadow OK!\n%!"
+  else begin
+    Printf.printf "Not OK: '%s' '%s'\n%!" (Shadow.to_string first_t) (Shadow.to_string second_t);
+    failwith "Not memory safe!"
+  end
 
-  (* Lower GC heap sizes, set verbose *)
-  (* Gc.set { (Gc.get ()) with *)
-  (*   Gc.verbose = 0x3FF; *)
-  (*   Gc.minor_heap_size = 1; *)
-  (* }; *)
-
-  Printf.printf "Testing Passwd.getpwnam on %d iterations\n" iter;
-  Pervasives.(flush stdout);
-  for i = 1 to iter do
-    ignore (Passwd.getpwnam name)
-  done;
-
-  Printf.printf "Testing Shadow.getspnam on %d iterations\n" iter;
-  begin
-    try
-      for i = 1 to iter do
-        ignore Shadow.(with_lock (fun () -> getspnam name))
-      done;
-    with _ ->
-      print_endline "Couldn't acquire lock, must be root";
-  end;
-  print_endline "* finished test_unshadow"; flush Pervasives.stdout
 
 let test_chspwd name pass =
   let open Shadow in

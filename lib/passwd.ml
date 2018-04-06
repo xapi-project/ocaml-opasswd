@@ -45,29 +45,44 @@ let string_to_char_array s =
   buf
 
 let from_passwd_t pw = {
-  name   = getf !@pw pw_name |> ptr_char_to_string;
-  passwd = getf !@pw pw_passwd |> ptr_char_to_string;
-  uid    = getf !@pw pw_uid |> Unsigned.UInt32.to_int;
-  gid    = getf !@pw pw_gid |> Unsigned.UInt32.to_int;
-  gecos  = getf !@pw pw_gecos |> ptr_char_to_string;
-  dir    = getf !@pw pw_dir |> ptr_char_to_string;
-  shell  = getf !@pw pw_shell |> ptr_char_to_string;
+  name   = getf pw pw_name |> ptr_char_to_string;
+  passwd = getf pw pw_passwd |> ptr_char_to_string;
+  uid    = getf pw pw_uid |> Unsigned.UInt32.to_int;
+  gid    = getf pw pw_gid |> Unsigned.UInt32.to_int;
+  gecos  = getf pw pw_gecos |> ptr_char_to_string;
+  dir    = getf pw pw_dir |> ptr_char_to_string;
+  shell  = getf pw pw_shell |> ptr_char_to_string;
 }
 
 let from_passwd_t_opt = function
   | None -> None
-  | Some pw -> Some (from_passwd_t pw)
+  | Some pw -> Some (from_passwd_t !@pw)
 
-let to_passwd_t pw =
-  let pw_t : passwd_t structure = make passwd_t in
-  setf pw_t pw_name (pw.name |> string_to_char_array |> CArray.start);
-  setf pw_t pw_passwd (pw.passwd |> string_to_char_array |> CArray.start);
-  setf pw_t pw_uid (Unsigned.UInt32.of_int pw.uid);
-  setf pw_t pw_gid (Unsigned.UInt32.of_int pw.gid);
-  setf pw_t pw_gecos (pw.gecos |> string_to_char_array |> CArray.start);
-  setf pw_t pw_dir (pw.dir |> string_to_char_array |> CArray.start);
-  setf pw_t pw_shell (pw.shell |> string_to_char_array |> CArray.start);
-  pw_t
+module Mem : sig
+  type mem
+  val to_mem : t -> mem
+  val passwd_addr_of_mem : mem -> (passwd_t, [`Struct]) Ctypes.structured Ctypes.ptr
+end = struct
+  type mem = passwd_t structure * char carray * char carray * char carray * char carray * char carray
+
+  let to_mem pw =
+    let name = string_to_char_array pw.name in
+    let passwd = string_to_char_array pw.passwd in
+    let gecos = string_to_char_array pw.gecos in
+    let dir = string_to_char_array pw.dir in
+    let shell = string_to_char_array pw.shell in
+    let pw_t : passwd_t structure = make passwd_t in
+    setf pw_t pw_name (CArray.start name);
+    setf pw_t pw_passwd (CArray.start passwd);
+    setf pw_t pw_uid (Unsigned.UInt32.of_int pw.uid);
+    setf pw_t pw_gid (Unsigned.UInt32.of_int pw.gid);
+    setf pw_t pw_gecos (CArray.start gecos);
+    setf pw_t pw_dir (CArray.start dir);
+    setf pw_t pw_shell (CArray.start shell);
+    (pw_t, name, passwd, gecos, dir, shell)
+
+  let passwd_addr_of_mem (sp_t, _, _, _, _, _) = addr sp_t
+end
 
 let passwd_file = "/etc/passwd"
 
@@ -89,8 +104,8 @@ let endpwent = foreign ~check_errno:true "endpwent" (void @-> returning void)
 let putpwent' =
   foreign ~check_errno:true "putpwent" (ptr passwd_t @-> file_descr @-> returning int)
 let putpwent fd pw =
-  let passwd_ptr = addr (to_passwd_t pw) in
-  putpwent' passwd_ptr fd |> ignore
+  let mem = Mem.to_mem pw in
+  putpwent' (Mem.passwd_addr_of_mem mem) fd |> ignore
 
 let get_db () =
   let rec loop acc =
