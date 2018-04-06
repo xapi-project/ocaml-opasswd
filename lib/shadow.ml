@@ -35,7 +35,7 @@ let ptr_char_to_string = coerce (ptr char) string
 
 let string_to_char_array s =
   let len = String.length s in
-  let buf = CArray.make char ~initial:'\x00' len in
+  let buf = CArray.make char ~initial:'\x00' (len+1) in
   String.iteri (fun idx c -> CArray.set buf idx c) s;
   buf
 
