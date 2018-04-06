@@ -45,18 +45,18 @@ let string_to_char_array s =
   buf
 
 let from_passwd_t pw = {
-  name   = getf !@pw pw_name |> ptr_char_to_string;
-  passwd = getf !@pw pw_passwd |> ptr_char_to_string;
-  uid    = getf !@pw pw_uid |> Unsigned.UInt32.to_int;
-  gid    = getf !@pw pw_gid |> Unsigned.UInt32.to_int;
-  gecos  = getf !@pw pw_gecos |> ptr_char_to_string;
-  dir    = getf !@pw pw_dir |> ptr_char_to_string;
-  shell  = getf !@pw pw_shell |> ptr_char_to_string;
+  name   = getf pw pw_name |> ptr_char_to_string;
+  passwd = getf pw pw_passwd |> ptr_char_to_string;
+  uid    = getf pw pw_uid |> Unsigned.UInt32.to_int;
+  gid    = getf pw pw_gid |> Unsigned.UInt32.to_int;
+  gecos  = getf pw pw_gecos |> ptr_char_to_string;
+  dir    = getf pw pw_dir |> ptr_char_to_string;
+  shell  = getf pw pw_shell |> ptr_char_to_string;
 }
 
 let from_passwd_t_opt = function
   | None -> None
-  | Some pw -> Some (from_passwd_t pw)
+  | Some pw -> Some (from_passwd_t !@pw)
 
 let to_passwd_t pw =
   let pw_t : passwd_t structure = make passwd_t in

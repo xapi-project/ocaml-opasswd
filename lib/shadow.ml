@@ -40,20 +40,20 @@ let string_to_char_array s =
   buf
 
 let from_shadow_t sp = {
-  name     = getf !@sp sp_name |> ptr_char_to_string;
-  passwd   = getf !@sp sp_passwd |> ptr_char_to_string;
-  last_chg = getf !@sp sp_last_chg |> Signed.Long.to_int64;
-  min      = getf !@sp sp_min |> Signed.Long.to_int64;
-  max      = getf !@sp sp_max |> Signed.Long.to_int64;
-  warn     = getf !@sp sp_warn |> Signed.Long.to_int64;
-  inact    = getf !@sp sp_inact |> Signed.Long.to_int64;
-  expire   = getf !@sp sp_expire |> Signed.Long.to_int64;
-  flag     = getf !@sp sp_flag |> Unsigned.ULong.to_int;
+  name     = getf sp sp_name |> ptr_char_to_string;
+  passwd   = getf sp sp_passwd |> ptr_char_to_string;
+  last_chg = getf sp sp_last_chg |> Signed.Long.to_int64;
+  min      = getf sp sp_min |> Signed.Long.to_int64;
+  max      = getf sp sp_max |> Signed.Long.to_int64;
+  warn     = getf sp sp_warn |> Signed.Long.to_int64;
+  inact    = getf sp sp_inact |> Signed.Long.to_int64;
+  expire   = getf sp sp_expire |> Signed.Long.to_int64;
+  flag     = getf sp sp_flag |> Unsigned.ULong.to_int;
 }
 
 let from_shadow_t_opt = function
   | None -> None
-  | Some sp -> Some (from_shadow_t sp)
+  | Some sp -> Some (from_shadow_t !@sp)
 
 let to_shadow_t sp =
   let sp_t : shadow_t structure = make shadow_t in
