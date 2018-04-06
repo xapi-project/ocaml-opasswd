@@ -81,7 +81,7 @@ let test_gc () =
   let rec mkshadow n =
     let name = "myname" in
     let passwd = "mypasswd" in
-    let tmp = Shadow.(to_shadow_t {name; passwd; last_chg=0L; min=0L; max=0L; warn=0L; inact=0L; expire=0L; flag=0;}) in
+    let tmp = Shadow.(Mem.to_mem {name; passwd; last_chg=0L; min=0L; max=0L; warn=0L; inact=0L; expire=0L; flag=0;}) in
     if n=0
     then tmp
     else begin
@@ -92,8 +92,8 @@ let test_gc () =
   in
   let first = mkshadow 10000 in
   let second = mkshadow 10000 in
-  let first_t = Shadow.from_shadow_t first in
-  let second_t = Shadow.from_shadow_t second in
+  let first_t = Shadow.Mem.from_mem first in
+  let second_t = Shadow.Mem.from_mem second in
   if (first_t = second_t) then
     Printf.printf "shadow OK!\n%!"
   else begin
